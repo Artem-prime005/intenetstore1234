@@ -1,0 +1,383 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Montserrat', sans-serif;
+}
+
+body {
+    background-color: #efefef;
+    color: #111;
+}
+
+.header {
+    background: linear-gradient(135deg, #0b1c3d 0%, #050b18 100%);
+    color: #fff;
+    padding-bottom: 80px; /* Збільшили нижній відступ банера */
+    position: relative;
+    overflow: hidden;
+}
+
+.top-bar {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 800;
+    font-size: 18px;
+    letter-spacing: 1px;
+}
+
+.nav {
+    display: flex;
+    gap: 30px;
+}
+
+.nav-link {
+    color: #b0c4de;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    transition: color 0.3s;
+}
+
+.nav-link:hover, .nav-link.active {
+    color: #ffffff;
+}
+
+.cart {
+    position: relative;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 8px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.cart-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background-color: #00bcd4;
+    color: #fff;
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: 50%;
+}
+
+.hero-banner {
+    text-align: center;
+    padding: 60px 20px 40px;
+    background: radial-gradient(circle at center, rgba(0, 150, 255, 0.15) 0%, transparent 70%);
+}
+
+.hero-banner h1 {
+    font-size: 36px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+}
+
+.hero-banner h2 {
+    font-size: 32px;
+    font-weight: 700;
+    color: #00e5ff;
+    margin-bottom: 15px;
+}
+
+.hero-banner p {
+    font-size: 13px;
+    color: #c0d0e0;
+    margin-bottom: 25px;
+}
+
+.btn-hero {
+    display: inline-block;
+    background: linear-gradient(90deg, #00acc1, #26c6da);
+    color: #fff;
+    padding: 12px 28px;
+    border-radius: 25px;
+    text-decoration: none;
+    font-weight: 600;
+    box-shadow: 0 4px 15px rgba(0, 188, 212, 0.4);
+    transition: transform 0.2s;
+}
+
+.btn-hero:hover {
+    transform: translateY(-2px);
+}
+
+.main-content {
+    max-width: 1200px;
+    margin: 40px auto 50px; 
+    padding: 0 20px;
+    position: relative;
+    z-index: 2;
+}
+
+.section-title {
+    text-align: center;      
+    font-size: 32px;        
+    font-weight: bold;      
+    color: #0b1325;          
+    margin-top: 40px;        
+    margin-bottom: 20px;     
+    font-family: sans-serif;
+}
+
+.products-grid {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    flex-wrap: wrap;
+    padding-bottom: 100px;
+}
+
+.product-card {
+    background: #ffffff;
+    border: 2px solid #b3d1ff;
+    border-radius: 20px;
+    width: 320px;
+    padding: 30px 20px;
+    text-align: center;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+}
+
+.product-image {
+    height: 240px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.product-image img {
+    max-height: 100%;
+    max-width: 100%;
+    object-fit: contain;
+}
+
+.product-name {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 15px;
+    color: #111;
+}
+
+.product-price {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    color: #222;
+}
+
+.btn-buy {
+    background: linear-gradient(135deg, #3b739e, #294d6c);
+    color: #fff;
+    border: none;
+    padding: 10px 40px;
+    border-radius: 20px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(41, 77, 108, 0.3);
+    transition: background 0.3s;
+}
+
+.btn-buy:hover {
+    background: linear-gradient(135deg, #294d6c, #1d354c);
+}
+
+:root {
+    /* Точна палітра з вашого макету */
+    --nexus-bg-main: #020b18;      /* Глибокий найтемніший синій для кутів */
+    --nexus-bg-glow: #061833;      /* М'яке синє свічення по центру */
+    --nexus-cyan: #00bcd4;         /* Яскраво-блакитний неоновий колір */
+    --nexus-cyan-glow: rgba(0, 188, 212, 0.4);
+    --text-light: #ffffff;
+    --text-muted: #94a3b8;         /* Акуратний сірий для другорядного тексту */
+}
+
+/* Секція "Про нас" з точним градієнтом та ефектом свічення */
+.about-section {
+    padding: 120px 20px;
+    
+    /* ЧИСТІ КОЛЬОРИ БЕЗ ЗМІННИХ: Глибокий темно-синій радіальний градієнт з підсвіткою по центру */
+    background: #020b18 radial-gradient(circle at center, #061833 0%, #020b18 70%) !important;
+    
+    /* Шрифти та колір тексту за замовчуванням */
+    font-family: system-ui, -apple-system, sans-serif;
+    color: #ffffff !important;
+    
+    /* Жорстке розтягування на всю ширину екрана, якщо блок затиснутий у контейнері */
+    width: 100vw !important;
+    position: relative !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    
+    /* Ховаємо все, що виходить за межі екрана, та прибираємо зайві відступи */
+    overflow: hidden;
+    box-sizing: border-box;
+    margin: 0;
+}
+
+.about-container {
+    max-width: 1200px; 
+    margin: 0 auto;
+    position: relative;
+    z-index: 2;
+    padding: 0 20px;
+    box-sizing: border-box;
+}
+
+/* Заголовки у стилі "NEXUS TECHNOLOGY" */
+.about-header {
+    text-align: center;
+    max-width: 800px;
+    margin: 0 auto 80px auto;
+}
+
+.about-subtitle {
+    display: inline-block;
+    font-size: 13px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--text-light); /* Білий, як головний бренд */
+    margin-bottom: 16px;
+}
+
+.about-title {
+    font-size: 42px;
+    font-weight: 900;
+    text-transform: uppercase; /* Робимо капсом, як на банері */
+    color: var(--nexus-cyan);   /* Яскравий неоновий колір */
+    letter-spacing: 1px;
+    margin-bottom: 24px;
+    /* Легке неонове сяйво для тексту */
+    text-shadow: 0 0 20px var(--nexus-cyan-glow);
+}
+
+.about-description {
+    font-size: 16px;
+    line-height: 1.7;
+    color: var(--text-muted);
+    font-weight: 400;
+}
+
+/* Сітка прозорих технологічних карток */
+.about-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 40px;
+    margin-bottom: 100px;
+}
+
+/* Картки у стилі Glassmorphism (прозорі, що зливаються з фоном) */
+.about-card {
+    background: rgba(6, 24, 51, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 24px;
+    padding: 50px 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    backdrop-filter: blur(10px); /* Ефект розмиття заднього фону */
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Ефект при наведенні на картку */
+.about-card:hover {
+    transform: translateY(-8px);
+    background: rgba(6, 24, 51, 0.8);
+    border-color: rgba(0, 188, 212, 0.4);
+    box-shadow: 0 15px 40px rgba(0, 188, 212, 0.1);
+}
+
+/* Круглі неонові іконки */
+.card-icon-container {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: rgba(0, 188, 212, 0.1);
+    color: var(--nexus-cyan);
+    margin-bottom: 30px;
+    box-shadow: 0 0 15px rgba(0, 188, 212, 0.2);
+}
+
+.card-icon-container svg {
+    width: 28px;
+    height: 28px;
+}
+
+.card-title {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--text-light);
+    margin-bottom: 14px;
+}
+
+.card-text {
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--text-muted);
+    flex-grow: 1;
+}
+
+/* Блок статистики внизу сайту */
+.about-stats {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 50px;
+    padding-top: 80px;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.stat-item {
+    text-align: center;
+}
+
+.stat-number {
+    font-size: 56px;
+    font-weight: 900;
+    color: var(--text-light);
+    margin-bottom: 8px;
+    letter-spacing: -1px;
+}
+
+.stat-label {
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--nexus-cyan);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+/* Адаптивність */
+@media (max-width: 768px) {
+    .about-title {
+        font-size: 32px;
+    }
+    .about-section {
+        padding: 80px 15px;
+    }
+}
