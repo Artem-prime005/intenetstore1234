@@ -1,130 +1,221 @@
 document.addEventListener("DOMContentLoaded", () => {
-    console.log("=== Кошик Nexus Technology активовано ===");
+    const CART_KEY = "nexus_cart";
+    let cart = [];
 
-    // 1. Створюємо структуру кошика в єдиному стилі з CSS
-    if (!document.getElementById("cartSidebar")) {
-        const cartHTML = `
-            <div class="cart-overlay" id="cartOverlay"></div>
-            <div class="cart-sidebar" id="cartSidebar">
-                <div class="cart-sidebar-header">
-                    <h2>Ваш кошик</h2>
-                    <button class="close-cart-btn" id="closeCartBtn">&times;</button>
-                </div>
-                <div class="cart-items-list" id="cartItemsList"></div>
-                <div class="cart-sidebar-footer">
-                    <div class="cart-total-box">
-                        <span>Разом:</span>
-                        <span class="cart-total-price" id="cartTotalPrice">0 ₴</span>
-                    </div>
-                    <button class="checkout-btn" id="checkoutBtn">Оформити замовлення</button>
-                </div>
+    try {
+        cart = JSON.parse(localStorage.getItem(CART_KEY)) || [];
+        if (!Array.isArray(cart)) cart = [];
+    } catch {
+        cart = [];
+    }
+
+    const headerCart = document.querySelector(".cart");
+
+    if (!headerCart) return;
+
+    document.body.insertAdjacentHTML("beforeend", `
+        <div class="cart-overlay" id="cartOverlay"></div>
+
+        <button class="cart-sticker" id="cartSticker">
+            <span class="sticker-icon">🛒</span>
+            <span class="sticker-badge" id="stickerBadge">0</span>
+        </button>
+
+        <aside class="cart-sidebar" id="cartSidebar">
+            <div class="cart-sidebar-header">
+                <h2>Ваш кошик</h2>
+                <button class="close-cart-btn" id="closeCartBtn">&times;</button>
             </div>
-        `;
-        document.body.insertAdjacentHTML('beforeend', cartHTML);
+
+            <div class="cart-items-list" id="cartItemsList"></div>
+
+            <div class="cart-sidebar-footer">
+                <div class="cart-total-box">
+                    <span>Разом:</span>
+                    <span class="cart-total-price" id="cartTotalPrice">0 ₴</span>
+                </div>
+                <button class="checkout-btn" id="checkoutBtn">
+                    Оформити замовлення
+                </button>
+            </div>
+        </aside>
+    `);
+
+    const sidebar = document.getElementById("cartSidebar");
+    const overlay = document.getElementById("cartOverlay");
+    const itemsList = document.getElementById("cartItemsList");
+    const totalPrice = document.getElementById("cartTotalPrice");
+    const sticker = document.getElementById("cartSticker");
+    const stickerBadge = document.getElementById("stickerBadge");
+
+    const money = price => price.toLocaleString("uk-UA") + " ₴";
+
+    function saveCart() {
+        localStorage.setItem(CART_KEY, JSON.stringify(cart));
     }
 
-    // 2. Ініціалізація змінних
-    let cart = JSON.parse(localStorage.getItem("nexus_cart")) || [];
-    const cartSidebar = document.getElementById("cartSidebar");
-    const cartOverlay = document.getElementById("cartOverlay");
-    const cartItemsList = document.getElementById("cartItemsList");
-    const cartTotalPriceElement = document.getElementById("cartTotalPrice");
-    const cartBadge = document.querySelector(".cart-badge");
-
-    // 3. Відкриття / Закриття через класи CSS (анімація плавного виїзду)
-    const openCart = () => {
-        cartSidebar.classList.add("open");
-        cartOverlay.classList.add("active");
-    };
-
-    const closeCart = () => {
-        cartSidebar.classList.remove("open");
-        cartOverlay.classList.remove("active");
-    };
-
-    // Прив'язка кліку до кошика в шапці
-    const cartTrigger = document.querySelector(".cart");
-    if (cartTrigger) {
-        cartTrigger.addEventListener("click", openCart);
+    function openCart() {
+        overlay.classList.add("active");
+        sidebar.classList.add("open");
     }
 
-    document.getElementById("closeCartBtn").addEventListener("click", closeCart);
-    cartOverlay.addEventListener("click", closeCart);
+    function closeCart() {
+        overlay.classList.remove("active");
+        sidebar.classList.remove("open");
+    }
 
-    // 4. Оновлення інтерфейсу
-    const updateCartUI = () => {
-        if (cartBadge) {
-            cartBadge.textContent = cart.reduce((sum, item) => sum + item.quantity, 0);
-        }
+    headerCart.addEventListener("click", openCart);
+    sticker.addEventListener("click", openCart);
 
-        cartItemsList.innerHTML = "";
+    document.getElementById("closeCartBtn")
+        .addEventListener("click", closeCart);
+
+    overlay.addEventListener("click", closeCart);
+
+    document.addEventListener("keydown", event => {
+        if (event.key === "Escape") closeCart();
+    });
+
+    function renderCart() {
+        const count = cart.reduce(
+            (sum, item) => sum + item.quantity, 0
+        );
+
+        const badge = headerCart.querySelector(".cart-badge");
+        if (badge) badge.textContent = count;
+
+        stickerBadge.textContent = count;
+        sticker.classList.toggle("visible", count > 0);
+
         if (cart.length === 0) {
-            cartItemsList.innerHTML = `<p style="text-align:center; color:#94a3b8; margin-top:20px;">Кошик порожній</p>`;
-            cartTotalPriceElement.textContent = "0 ₴";
+            itemsList.innerHTML = `
+                <div class="cart-empty">
+                    <h3>Кошик порожній</h3>
+                    <p>Додайте товари, натиснувши кнопку «Купити».</p>
+                </div>
+            `;
+            totalPrice.textContent = money(0);
             return;
         }
 
-        let total = 0;
+        itemsList.innerHTML = "";
+
         cart.forEach((item, index) => {
-            total += item.price * item.quantity;
-            const itemHTML = `
-                <div class="cart-item">
-                    <div class="cart-item-details">
-                        <span class="cart-item-name">${item.name}</span>
-                        <span class="cart-item-price">${item.price.toLocaleString()} ₴ ${item.quantity > 1 ? 'x' + item.quantity : ''}</span>
-                    </div>
-                    <button class="remove-item-btn" data-index="${index}">&times;</button>
-                </div>
+            const card = document.createElement("div");
+            card.className = "cart-item";
+
+            const details = document.createElement("div");
+            details.className = "cart-item-details";
+
+            const name = document.createElement("span");
+            name.className = "cart-item-name";
+            name.textContent = item.name;
+
+            const price = document.createElement("span");
+            price.className = "cart-item-price";
+            price.textContent = money(item.price * item.quantity);
+
+            const quantity = document.createElement("div");
+            quantity.className = "cart-quantity";
+
+            quantity.innerHTML = `
+                <button data-action="minus" data-index="${index}">−</button>
+                <span>${item.quantity}</span>
+                <button data-action="plus" data-index="${index}">+</button>
             `;
-            cartItemsList.insertAdjacentHTML("beforeend", itemHTML);
+
+            const remove = document.createElement("button");
+            remove.className = "remove-item-btn";
+            remove.textContent = "×";
+            remove.dataset.action = "remove";
+            remove.dataset.index = index;
+
+            details.append(name, price, quantity);
+            card.append(details, remove);
+            itemsList.appendChild(card);
         });
 
-        cartTotalPriceElement.textContent = `${total.toLocaleString()} ₴`;
+        const total = cart.reduce(
+            (sum, item) => sum + item.price * item.quantity, 0
+        );
 
-        // Видалення елементів
-        document.querySelectorAll(".remove-item-btn").forEach(btn => {
-            btn.addEventListener("click", (e) => {
-                const idx = parseInt(e.target.getAttribute("data-index"));
-                if (cart[idx].quantity > 1) cart[idx].quantity -= 1;
-                else cart.splice(idx, 1);
-                localStorage.setItem("nexus_cart", JSON.stringify(cart));
-                updateCartUI();
-            });
-        });
-    };
+        totalPrice.textContent = money(total);
+    }
 
-    // 5. Обробка натискання на кнопки "Купити" всередині карток товарів
-    const buyButtons = document.querySelectorAll(".btn-buy");
-    buyButtons.forEach(button => {
-        button.addEventListener("click", (e) => {
-            e.preventDefault();
-            const card = e.target.closest(".product-card");
-            if (!card) return;
+    document.querySelectorAll(".product-card").forEach(card => {
+        const button = card.querySelector(".btn-buy");
+        if (!button) return;
 
-            const name = card.querySelector(".product-name").textContent.trim();
-            const priceText = card.querySelector(".product-price").textContent.trim();
-            const price = parseInt(priceText.replace(/[^0-9]/g, ""));
+        button.addEventListener("click", () => {
+            const name = card.querySelector(".product-name")
+                ?.textContent.trim();
 
-            if (name && !isNaN(price)) {
-                const existing = cart.find(item => item.name === name);
-                if (existing) existing.quantity += 1;
-                else cart.push({ name, price, quantity: 1 });
+            const priceText = card.querySelector(".product-price")
+                ?.textContent || "";
 
-                localStorage.setItem("nexus_cart", JSON.stringify(cart));
-                updateCartUI();
-                openCart();
+            const price = Number(priceText.replace(/[^\d]/g, ""));
+
+            if (!name || !Number.isFinite(price) || price <= 0) return;
+
+            const existing = cart.find(item => item.name === name);
+
+            if (existing) {
+                existing.quantity++;
+            } else {
+                cart.push({
+                    name: name,
+                    price: price,
+                    quantity: 1
+                });
             }
+
+            saveCart();
+            renderCart();
+            openCart();
         });
     });
 
-    // Оформлення
-    document.getElementById("checkoutBtn").addEventListener("click", () => {
-        alert("Дякуємо! Ваше замовлення успішно оформлено.");
-        cart = [];
-        localStorage.removeItem("nexus_cart");
-        updateCartUI();
-        closeCart();
+    itemsList.addEventListener("click", event => {
+        const button = event.target.closest("button[data-action]");
+        if (!button) return;
+
+        const index = Number(button.dataset.index);
+        const item = cart[index];
+
+        if (!item) return;
+
+        switch (button.dataset.action) {
+            case "plus":
+                item.quantity++;
+                break;
+
+            case "minus":
+                item.quantity--;
+                if (item.quantity <= 0) cart.splice(index, 1);
+                break;
+
+            case "remove":
+                cart.splice(index, 1);
+                break;
+        }
+
+        saveCart();
+        renderCart();
     });
 
-    updateCartUI();
+    document.getElementById("checkoutBtn").addEventListener("click", () => {
+        if (cart.length === 0) return;
+
+        const total = cart.reduce(
+            (sum, item) => sum + item.price * item.quantity, 0
+        );
+
+        alert(
+            "Дякуємо за замовлення в NEXUS TECHNOLOGY!\n" +
+            "Сума: " + money(total) + "\n" +
+            "Це демонстраційне оформлення без справжньої оплати."
+        );
+    });
+
+    renderCart();
 });

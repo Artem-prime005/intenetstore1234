@@ -37,10 +37,7 @@ body {
     letter-spacing: 1px;
 }
 
-.nav {
-    display: flex;
-    gap: 30px;
-}
+
 
 .nav-link {
     color: #b0c4de;
@@ -54,13 +51,7 @@ body {
     color: #ffffff;
 }
 
-.cart {
-    position: relative;
-    background: rgba(255, 255, 255, 0.1);
-    padding: 8px 12px;
-    border-radius: 8px;
-    cursor: pointer;
-}
+
 
 .cart-badge {
     position: absolute;
@@ -382,67 +373,135 @@ body {
     }
 }
 
-.cart {
+.cart-sticker {
+    position: fixed;
+    bottom: 30px;
+    right: -100px; /* Спочатку схований, з'явиться коли додадуть товар */
+    width: 65px;
+    height: 65px;
+    background: linear-gradient(135deg, #00acc1, #26c6da);
+    border-radius: 50%;
+    box-shadow: 0 4px 20px rgba(0, 188, 212, 0.5), inset 0 0 10px rgba(255, 255, 255, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
     cursor: pointer;
-    transition: background 0.3s;
-}
-.cart:hover {
-    background: rgba(255, 255, 255, 0.2);
+    z-index: 997;
+    transition: right 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), transform 0.2s ease;
 }
 
-/* Віджет бічної панелі кошика */
+/* Стає видимим, коли в кошику є хоча б 1 товар */
+.cart-sticker.visible {
+    right: 30px;
+}
+
+.cart-sticker:hover {
+    transform: scale(1.1);
+    background: linear-gradient(135deg, #26c6da, #00e5ff);
+}
+
+/* Емодзі або іконка всередині стікера */
+.sticker-icon {
+    font-size: 26px;
+    line-height: 1;
+}
+
+/* Червоний неоновий лічильник на стікері */
+.sticker-badge {
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    background: #ff4d4d;
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: 800;
+    min-width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #020b18;
+    box-shadow: 0 0 10px rgba(255, 77, 77, 0.6);
+}
+
+/* Ефект пульсації при кліку на «Купити» */
+.cart-sticker.pulse {
+    transform: scale(1.3);
+    box-shadow: 0 0 30px rgba(0, 229, 255, 0.8);
+}
+
+/* Тло-оверлей */
+.cart-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(4px);
+    z-index: 998;
+    display: none;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
+.cart-overlay.active {
+    display: block !important;
+    opacity: 1;
+}
+
+/* Контейнер віджета кошика */
 .cart-sidebar {
     position: fixed;
     top: 0;
-    right: -400px; /* Початково схований */
+    right: -420px;
     width: 100%;
     max-width: 400px;
     height: 100vh;
     background: #020b18 radial-gradient(circle at center, #061833 0%, #020b18 100%);
-    box-shadow: -5px 0 25px rgba(0, 0, 0, 0.5);
+    box-shadow: -10px 0 35px rgba(0, 0, 0, 0.6);
     z-index: 999;
     transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     display: flex;
     flex-direction: column;
     color: #ffffff;
-    font-family: 'Montserrat', sans-serif;
-    border-left: 1px solid rgba(0, 188, 212, 0.2);
+    border-left: 1px solid rgba(0, 188, 212, 0.3);
+    box-sizing: border-box;
 }
-
 .cart-sidebar.open {
-    right: 0; /* Показуємо кошик */
+    right: 0 !important;
 }
 
-/* Шапка кошика */
+/* Шапка віджета */
 .cart-sidebar-header {
-    padding: 20px;
+    padding: 25px 20px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
-
 .cart-sidebar-header h2 {
     font-size: 20px;
     font-weight: 800;
     color: #00bcd4;
     text-transform: uppercase;
-    letter-spacing: 1px;
+    letter-spacing: 1.5px;
+    margin: 0;
 }
-
 .close-cart-btn {
     background: none;
     border: none;
     color: #ffffff;
-    font-size: 28px;
+    font-size: 32px;
     cursor: pointer;
-    transition: color 0.3s;
+    transition: color 0.3s, transform 0.3s;
 }
 .close-cart-btn:hover {
-    color: #00bcd4;
+    color: #ff4d4d;
+    transform: rotate(90deg);
 }
 
-/* Список товарів у кошику */
+/* Список покупок */
 .cart-items-list {
     flex-grow: 1;
     overflow-y: auto;
@@ -451,45 +510,40 @@ body {
     flex-direction: column;
     gap: 15px;
 }
-
-/* Картка товару в кошику (Glassmorphism) */
 .cart-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
     background: rgba(6, 24, 51, 0.6);
     border: 1px solid rgba(255, 255, 255, 0.05);
-    border-radius: 12px;
-    padding: 12px;
+    border-radius: 16px;
+    padding: 16px;
     backdrop-filter: blur(5px);
 }
-
 .cart-item-details {
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 6px;
+    text-align: left;
 }
-
 .cart-item-name {
     font-size: 14px;
-    font-weight: 600;
-    color: #ffffff;
+    font-weight: 700;
 }
-
 .cart-item-price {
     font-size: 14px;
     font-weight: 700;
-    color: #00bcd4;
+    color: #00e5ff;
 }
 
-/* Кнопка видалення товару */
+/* Кнопка-хрестик видалення */
 .remove-item-btn {
-    background: rgba(255, 0, 0, 0.1);
-    border: 1px solid rgba(255, 0, 0, 0.3);
+    background: rgba(255, 77, 77, 0.1);
+    border: 1px solid rgba(255, 77, 77, 0.2);
     color: #ff4d4d;
     border-radius: 50%;
-    width: 28px;
-    height: 28px;
+    width: 30px;
+    height: 30px;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -499,65 +553,106 @@ body {
 }
 .remove-item-btn:hover {
     background: #ff4d4d;
-    color: #fff;
+    color: #ffffff;
+    box-shadow: 0 0 10px rgba(255, 77, 77, 0.4);
 }
 
-/* Низ кошика (Сума та Оформлення) */
+/* Низ кошика */
 .cart-sidebar-footer {
-    padding: 20px;
+    padding: 25px 20px;
     border-top: 1px solid rgba(255, 255, 255, 0.1);
-    background: rgba(2, 11, 24, 0.9);
+    background: rgba(2, 11, 24, 0.95);
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 20px;
 }
-
 .cart-total-box {
     display: flex;
     justify-content: space-between;
+    align-items: center;
     font-size: 16px;
     font-weight: 700;
+    text-transform: uppercase;
 }
-
 .cart-total-price {
     color: #00e5ff;
-    font-size: 18px;
+    font-size: 22px;
+    font-weight: 800;
+    text-shadow: 0 0 10px rgba(0, 229, 255, 0.4);
 }
-
 .checkout-btn {
     background: linear-gradient(90deg, #00acc1, #26c6da);
-    color: #fff;
+    color: #ffffff;
     border: none;
-    padding: 14px;
+    padding: 16px;
     border-radius: 25px;
     font-size: 15px;
-    font-weight: 600;
+    font-weight: 700;
+    text-transform: uppercase;
     cursor: pointer;
     box-shadow: 0 4px 15px rgba(0, 188, 212, 0.4);
-    transition: transform 0.2s, background 0.3s;
-    text-align: center;
+    transition: all 0.3s ease;
 }
 .checkout-btn:hover {
     transform: translateY(-2px);
     box-shadow: 0 6px 20px rgba(0, 188, 212, 0.6);
 }
 
-/* Темна підкладка-оверлей при відкритті кошика */
-.cart-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(0, 0, 0, 0.6);
-    backdrop-filter: blur(3px);
-    z-index: 998;
-    display: none;
-}
-.cart-overlay.active {
-    display: block;
+nav {
+    display: flex;
+    align-items: center;
+    gap: 30px;
 }
 
-.cart-overlay.active {
-    display: block !important;
+.cart {
+    position: relative;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 8px 16px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background 0.3s, transform 0.2s;
+    display: flex;
+    align-items: center;
+    color: #fff;
+}
+
+.cart:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: scale(1.05);
+}
+
+/* Маленький круглий лічильник товарів над кошиком */
+.cart-badge {
+    background-color: #00bcd4;
+    color: #fff;
+    font-size: 11px;
+    font-weight: bold;
+    padding: 2px 7px;
+    border-radius: 10px;
+    margin-left: 8px;
+    box-shadow: 0 0 10px rgba(0, 188, 212, 0.6);
+}
+
+/* Стиль кнопки "Купити" для карток товарів */
+.btn-buy {
+    background: linear-gradient(135deg, #00acc1, #26c6da);
+    color: #fff;
+    border: none;
+    padding: 12px 35px;
+    border-radius: 25px;
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    margin-top: 15px;
+    width: 100%;
+    box-shadow: 0 4px 15px rgba(0, 188, 212, 0.3);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.btn-buy:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 188, 212, 0.5);
 }
